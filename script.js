@@ -60,6 +60,7 @@ var Destruction = function () {
       if(shots[i].y < ships[j].y+10 && shots[i].x+5 > ships[j].x && shots[i].x < ships[j].x+10) {
         ships.splice(j, 1);
         shots.splice(i, 1);
+        countLevel++;
         break;
       }
     }
@@ -86,9 +87,12 @@ var shipsGeneration = function (time) {
   for(var i = 0; i < ships.length; i++) {
     var s = ships[i], p = (time-s.ts)/s.t;
     if(p < 1)s.y = p*400|0;
-    else {s.y= 0; s.ts = time ; s.t= speedShips*1000;
-    s.x = Math.random() * 590|0;
-    };
+    else {
+    	gameStop--;
+    	ships = [];
+    	countLevel = 0;
+    	break;
+    }
 
     drawRect(s.x, s.y, 10, 10, "rgb(22, 105, 67)");
 
@@ -96,7 +100,7 @@ var shipsGeneration = function (time) {
 };
 
 var shotsGeneration = function (frameTime) {
-  if(isKeyDown('Space')) {
+  if(isKeyDown('Space')  && !playStop) {
     var length = shots.length;
     if(length > 0) {
       if( (shots[length-1].y + 7) < 380) {
@@ -122,14 +126,94 @@ var shotsGeneration = function (frameTime) {
 };
 
 var Player = function (frameTime) {
-  if(isKeyDown('Left')) {
-    xPlayer -= (frameTime / 1000) * speedPlayer;
-  }
-  if(isKeyDown('Right')) {
-    xPlayer += (frameTime / 1000) * speedPlayer;
-  }
+ 	if(isKeyDown('Left') && !playStop) {
+   		xPlayer -= (frameTime / 1000) * speedPlayer;
+ 	}
+  	if(isKeyDown('Right') && !playStop) {
+    	xPlayer += (frameTime / 1000) * speedPlayer;
+  	}
   drawPlayer(xPlayer);
 };
+
+var gameStopControl = function () {
+	if(gameStop > 0) {
+		statusGame.innerHTML = "Осталось попыток: "+gameStop;
+	} else {
+		statusGame.innerHTML = "Вы проиграли!";
+		playStop = true;
+		Level = 1;
+		document.getElementById('level').innerHTML = "Уровень игры "+Level;
+		pGame.style.display = 'block';
+	}
+
+};
+
+var play = function () {
+	document.getElementById('game').onclick = function () {
+		ships = [];
+		shots = [];
+		densityShips = 0;
+		xPlayer = 120;
+		lastTime = 0;
+		countShips = 0;
+		gameStop = 3;
+		playStop = false;
+		speedPlayer = 200;
+		densityShips = 30;
+		numberShips = 20;
+		speedShips = 15; 
+		speedShots = 150;
+		pGame.style.display = 'none';
+	};	
+};
+
+
+var setLevelMap = function () {
+	if(countLevel == levelMap[Level].countLevel) {
+		speedPlayer = levelMap[Level].speedPlayer; // скорость передвижения игрока
+		densityShips = levelMap[Level].densityShips; // плотность кораблей
+		numberShips = levelMap[Level].numberShips; // количество кораблей
+		speedShips = levelMap[Level].speedShips; // скорость посадки кораблей
+		speedShots = levelMap[Level].speedShots; // скорость пуль
+		document.getElementById('level').innerHTML = "Уровень игры "+Level;
+		Level++;
+		countLevel = 0;
+		ships = [];
+		gameStop = 3;
+	}
+	if(Level == 4) {
+		Level = 1;
+	}
+};
+
+var levelMap = {
+	1 : {
+		countLevel : 20,
+		speedPlayer : 200,
+		densityShips : 30,
+		numberShips : 20,
+		speedShips : 10,
+		speedShots : 150
+	},
+	2 : {
+		countLevel : 40,
+		speedPlayer : 200,
+		densityShips : 30,
+		numberShips : 40,
+		speedShips : 8,
+		speedShots : 150
+	},
+	3 : {
+		countLevel : 60,
+		speedPlayer : 200,
+		densityShips : 30,
+		numberShips : 60,
+		speedShips : 5,
+		speedShots : 150
+	}
+};
+
+var Level = 1;
 
 var ships = [];
 var shots = [];
@@ -137,22 +221,36 @@ var densityShips = 0;
 var xPlayer = 120;
 var lastTime = 0;
 var countShips = 0;
+var gameStop = 3;
+var playStop = false; 
+var statusGame = document.getElementById("statusGame");
+var pGame = document.getElementById("pGame");
+pGame.style.display = 'none';
 
-var speedPlayer = 200; // скорость передвижения игрока
-var densityShips = 30; // плотность кораблей
-var numberShips = 20; // количество кораблей
-var speedShips = 15;
-var speedShots = 150; // скорость пуль
+var countLevel = 20;
+
+var speedPlayer = 0; // скорость передвижения игрока
+var densityShips = 0; // плотность кораблей
+var numberShips = 0; // количество кораблей
+var speedShips = 0; // скорость посадки кораблей
+var speedShots = 0; // скорость пуль
 
 var main = function (time) {
-
-	console.log(time);
 	
   ctx.clearRect(0, 0, 600, 400);
   drawRect(0, 0, 600, 400, "rgb(36, 177, 219)");
 
   var startTime = time;
   var frameTime = time - lastTime;
+
+  setLevelMap();
+  console.log(Level);
+
+  gameStopControl();
+
+  if(playStop){
+  	 play();
+  }
 
   Destruction();
 
@@ -168,3 +266,5 @@ var main = function (time) {
 };
 
 main();
+
+//console.log(levelMap[Level].countLevel);
