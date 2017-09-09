@@ -57,15 +57,20 @@ var drawPlayer = function (x) {
 var Destruction = function () {
   for(var i = 0; i < shots.length; i++) {
     for(var j = 0; j < ships.length; j++) {
-      if(~~shots[i].y == ~~ships[j].y+5 && shots[i].x+5 >= ships[j].x && shots[i].x <= ships[j].x+10) {
+      if(shots[i].y < ships[j].y+10 && shots[i].x+5 > ships[j].x && shots[i].x < ships[j].x+10) {
         ships.splice(j, 1);
         shots.splice(i, 1);
         break;
       }
     }
   }
+  for(var i = 0; i < shots.length; i++) {
+      if(shots[i].y < 0) {
+        shots.splice(i, 1);
+    }
+  }
 };
-;
+
 var shipsGeneration = function (time) {
   if( countShips > densityShips && ships.length < numberShips) {
     ships.push({
@@ -140,6 +145,8 @@ var speedShips = 15;
 var speedShots = 150; // скорость пуль
 
 var main = function (time) {
+
+	console.log(time);
 	
   ctx.clearRect(0, 0, 600, 400);
   drawRect(0, 0, 600, 400, "rgb(36, 177, 219)");
