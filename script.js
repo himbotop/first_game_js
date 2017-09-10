@@ -163,6 +163,7 @@ var play = function () {
 		numberShips = 20;
 		speedShips = 15; 
 		speedShots = 150;
+		countLevel = 20;
 		pGame.style.display = 'none';
 	};	
 };
@@ -181,7 +182,7 @@ var setLevelMap = function () {
 		ships = [];
 		gameStop = 3;
 	}
-	if(Level == 4) {
+	if(Level == 5) {
 		Level = 1;
 	}
 };
@@ -192,7 +193,7 @@ var levelMap = {
 		speedPlayer : 200,
 		densityShips : 30,
 		numberShips : 20,
-		speedShips : 10,
+		speedShips : 15,
 		speedShots : 150
 	},
 	2 : {
@@ -200,11 +201,19 @@ var levelMap = {
 		speedPlayer : 200,
 		densityShips : 30,
 		numberShips : 40,
-		speedShips : 8,
+		speedShips : 10,
 		speedShots : 150
 	},
 	3 : {
 		countLevel : 60,
+		speedPlayer : 200,
+		densityShips : 30,
+		numberShips : 60,
+		speedShips : 8,
+		speedShots : 150
+	},
+	4 : {
+		countLevel : 80,
 		speedPlayer : 200,
 		densityShips : 30,
 		numberShips : 60,
@@ -243,8 +252,8 @@ var main = function (time) {
   var startTime = time;
   var frameTime = time - lastTime;
 
+  
   setLevelMap();
-  console.log(Level);
 
   gameStopControl();
 
