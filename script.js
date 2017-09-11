@@ -142,8 +142,8 @@ var gameStopControl = function () {
 		statusGame.innerHTML = "Вы проиграли!";
 		playStop = true;
 		Level = 1;
-		document.getElementById('level').innerHTML = "Уровень игры "+Level;
 		pGame.style.display = 'block';
+		console.log("dd");
 	}
 
 };
@@ -170,20 +170,27 @@ var play = function () {
 
 
 var setLevelMap = function () {
-	if(countLevel == levelMap[Level].countLevel) {
-		speedPlayer = levelMap[Level].speedPlayer; // скорость передвижения игрока
-		densityShips = levelMap[Level].densityShips; // плотность кораблей
-		numberShips = levelMap[Level].numberShips; // количество кораблей
-		speedShips = levelMap[Level].speedShips; // скорость посадки кораблей
-		speedShots = levelMap[Level].speedShots; // скорость пуль
-		document.getElementById('level').innerHTML = "Уровень игры "+Level;
-		Level++;
-		countLevel = 0;
-		ships = [];
-		gameStop = 3;
-	}
-	if(Level == 5) {
-		Level = 1;
+	if(levelMap.hasOwnProperty(Level)) {
+		if(!levelMap[Level].readLevel) {
+			speedPlayer = levelMap[Level].speedPlayer; // скорость передвижения игрока
+			densityShips = levelMap[Level].densityShips; // плотность кораблей
+			numberShips = levelMap[Level].numberShips; // количество кораблей
+			speedShips = levelMap[Level].speedShips; // скорость посадки кораблей
+			speedShots = levelMap[Level].speedShots; // скорость пуль
+			document.getElementById('level').innerHTML = "Уровень игры "+Level;
+			countLevel = 0;
+			ships = [];
+			gameStop = 3;
+			levelMap[Level].readLevel = true;
+		}
+		if(countLevel == levelMap[Level].countLevel) {
+			levelMap[Level].readLevel = false;
+			Level++;
+			if(!levelMap.hasOwnProperty(Level)) {
+				Level = 1;
+				countLevel = 0;
+			}
+		}
 	}
 };
 
@@ -194,31 +201,35 @@ var levelMap = {
 		densityShips : 30,
 		numberShips : 20,
 		speedShips : 15,
-		speedShots : 150
+		speedShots : 150,
+		readLevel : false
 	},
 	2 : {
-		countLevel : 40,
+		countLevel : 20,
 		speedPlayer : 200,
 		densityShips : 30,
 		numberShips : 40,
 		speedShips : 10,
-		speedShots : 150
+		speedShots : 150,
+		readLevel : false
 	},
 	3 : {
-		countLevel : 60,
+		countLevel : 20,
 		speedPlayer : 200,
 		densityShips : 30,
 		numberShips : 60,
 		speedShips : 8,
-		speedShots : 150
+		speedShots : 150,
+		readLevel : false
 	},
 	4 : {
-		countLevel : 80,
+		countLevel : 20,
 		speedPlayer : 200,
 		densityShips : 30,
 		numberShips : 60,
 		speedShips : 5,
-		speedShots : 150
+		speedShots : 150,
+		readLevel : false
 	}
 };
 
@@ -236,7 +247,7 @@ var statusGame = document.getElementById("statusGame");
 var pGame = document.getElementById("pGame");
 pGame.style.display = 'none';
 
-var countLevel = 20;
+var countLevel = 0;
 
 var speedPlayer = 0; // скорость передвижения игрока
 var densityShips = 0; // плотность кораблей
@@ -275,5 +286,7 @@ var main = function (time) {
 };
 
 main();
+
+console.log(levelMap.length);
 
 //console.log(levelMap[Level].countLevel);
