@@ -164,6 +164,7 @@ var play = function () {
 		speedShips = 15; 
 		speedShots = 150;
 		countLevel = 20;
+		Level = 1;
 		pGame.style.display = 'none';
 	};	
 };
