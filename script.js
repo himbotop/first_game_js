@@ -289,5 +289,3 @@ var main = function (time) {
 main();
 
 console.log(levelMap.length);
-
-//console.log(levelMap[Level].countLevel);
